@@ -32,8 +32,25 @@ def get_product_by_id(db: Session, product_id: int):
     return db.query(models.Product).filter(models.Product.id == product_id).first()
 
 
-def get_products_by_name(db: Session, name: str, limit: int = 100):
-    return db.query(models.Product).filter(models.Product.name == name).limit(limit).all()
+def get_products(db: Session, name=str, category=str, created_date=str):
+    results = db.query(models.Product)
+    if created_date:
+        parsed_date = parse_date(created_date)
+        if not parsed_date:
+            raise HTTPException(status_code=400, detail="Invalid date")
+        # Filter by year
+        results = results.filter(extract("year", models.Product.created_at) == parsed_date.year)
+        if len(created_date) > 4:
+            # Filter by month
+            results = results.filter(extract("month", models.Product.created_at) == parsed_date.month)
+        if len(created_date) > 7:
+            # Filter by day
+            results = results.filter(extract("day", models.Product.created_at) == parsed_date.day)
+    if name:
+        results = results.filter(models.Product.name == name)
+    if category:
+        results = results.join(models.Product).filter(models.Product.category == category)
+    return results.all()
 
 
 def get_sales(db: Session, product_name=str, category=str, sale_date=str):

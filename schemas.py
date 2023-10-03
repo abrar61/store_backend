@@ -54,6 +54,7 @@ class ProductCreate(ProductBase):
 
 class Product(ProductBase):
     id: int
+    created_at: datetime
     sales: List[Sale] = []
 
     class Config:

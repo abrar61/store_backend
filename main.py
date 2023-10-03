@@ -41,8 +41,8 @@ def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)
 
 
 @app.get("/products/", response_model=List[schemas.Product])
-def get_products_by_name(name: str, db: Session = Depends(get_db)):
-    return operations.get_products_by_name(db=db, name=name)
+def get_products(name: str = "", category: str = "", created_date: str = "", db: Session = Depends(get_db)):
+    return operations.get_products(db=db, name=name, category=category, created_date=created_date)
 
 
 @app.post("/sales/", response_model=schemas.Sale)

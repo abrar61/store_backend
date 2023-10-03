@@ -39,7 +39,8 @@ python populate_data.py
 
 #### POST /categories/  To create category with unique name
 #### POST /products/  To create product
-#### GET /products/  Search products by name
+#### GET /products/  Get products along with their sales (filter by name, category and date (all or none) is applicable). Date can be entered in formats 2023 or 2023-10 or 2023-10-03 to filter by year or month or date respectively
+#### GET /sales/  Get sales (filter by name, category and date (all or none) is applicable). Date can be entered in formats 2023 or 2023-10 or 2023-10-03 to filter by year or month or date respectively
 #### GET /sales-analysis-by-category/  Returns total sales, revenue, and profit of products sold in given category (Date range filter can also be applied to filter by date)
 #### GET /sales-analysis-by-product/  Returns total sales, revenue, and profit of each product (Date range filter can also be applied to filter by date)
 #### GET /inventory/  Show each product count with critical low flag
