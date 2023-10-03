@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 import operations
 import models
 import schemas
+import re
 from datetime import date
 from database import SessionLocal, engine
 
@@ -52,6 +53,14 @@ def sell_product(sale: schemas.SaleCreate, db: Session = Depends(get_db)):
     elif db_product.count == 0:
         raise HTTPException(status_code=400, detail="Product not available")
     return operations.create_sale(db=db, sale=sale)
+
+
+@app.get("/sales/", response_model=List[schemas.SaleReturn])
+def get_sales(product_name: str = "", category: str = "", sale_date: str = "", db: Session = Depends(get_db)):
+    if sale_date:
+        if not (re.match("^\d{4}$|^\d{4}-\d{2}$|^\d{4}-\d{2}-\d{2}$", sale_date)):
+            raise HTTPException(status_code=400, detail="Invalid date")
+    return operations.get_sales(db=db, product_name=product_name, category=category, sale_date=sale_date)
 
 
 @app.get("/sales-analysis-by-category/")

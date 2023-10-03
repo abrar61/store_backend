@@ -1,7 +1,7 @@
 # store-backend
 
 ## Project setup
-### Python3.8 was used for project setup
+### Python3.8 was used for project setup. SQLite is used as database. Same could be used for testing.
 
 ### Clone the project from github and cd to project folder
 ```
@@ -21,7 +21,7 @@ pip install -U pip
 
 ### Install the required packages using following command
 ```
-pip install -r requirements.txt
+pip install -r requirements.txt --no-deps
 ```
 
 ### Run the project using following command

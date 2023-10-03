@@ -24,6 +24,15 @@ class Sale(SaleBase):
         from_attributes = True
 
 
+class SaleReturn(SaleBase):
+    id: int
+    profit: float
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
 class Category(BaseModel):
     name: str
 

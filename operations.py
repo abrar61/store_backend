@@ -1,6 +1,8 @@
-from sqlalchemy import func, case
+from sqlalchemy import func, case, extract
 from sqlalchemy.orm import Session
 from datetime import time, datetime
+from dateutil.parser import parse
+from fastapi import HTTPException
 from typing import List
 import models
 import schemas
@@ -32,6 +34,27 @@ def get_product_by_id(db: Session, product_id: int):
 
 def get_products_by_name(db: Session, name: str, limit: int = 100):
     return db.query(models.Product).filter(models.Product.name == name).limit(limit).all()
+
+
+def get_sales(db: Session, product_name=str, category=str, sale_date=str):
+    results = db.query(models.Sale)
+    if sale_date:
+        parsed_date = parse_date(sale_date)
+        if not parsed_date:
+            raise HTTPException(status_code=400, detail="Invalid date")
+        # Filter by year
+        results = results.filter(extract("year", models.Sale.created_at) == parsed_date.year)
+        if len(sale_date) > 4:
+            # Filter by month
+            results = results.filter(extract("month", models.Sale.created_at) == parsed_date.month)
+        if len(sale_date) > 7:
+            # Filter by day
+            results = results.filter(extract("day", models.Sale.created_at) == parsed_date.day)
+    if product_name:
+        results = results.filter(models.Sale.product.name == product_name)
+    if category:
+        results = results.join(models.Product).filter(models.Product.category == category)
+    return results.all()
 
 
 def get_products_by_category(db: Session, category: str, limit: int = 100):
@@ -95,4 +118,10 @@ def get_product_count_by_category(db: Session):
                     func.count(models.Product.id).label("product_count")
                     ).group_by(models.Product.category)
 
+
+def parse_date(d):
+    try:
+        return parse(d)
+    except:
+        return False
 
