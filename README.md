@@ -5,7 +5,7 @@
 
 ### Clone the project from github and cd to project folder
 ```
-git clone
+git clone git@github.com:abrar61/store_backend.git
 cd [project-folder-path]
 ```
 
