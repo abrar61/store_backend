@@ -37,6 +37,7 @@ python populate_data.py
 
 ### Following is the brief description of APIs developed
 
+#### /docs to access API documentation
 #### POST /categories/  To create category with unique name
 #### POST /products/  To create product
 #### GET /products/  Get products along with their sales (filter by name, category and date (all or none) is applicable). Date can be entered in formats 2023 or 2023-10 or 2023-10-03 to filter by year or month or date respectively
