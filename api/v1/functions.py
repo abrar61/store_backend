@@ -1,0 +1,53 @@
+from dateutil.parser import parse
+from fastapi import HTTPException
+from datetime import time, datetime
+
+from sqlalchemy import extract, func
+from sqlalchemy.orm import Session
+
+from models.product import Product
+from models.sale import Sale
+from models.category import Category
+
+
+def parse_date(d):
+    try:
+        return parse(d)
+    except:
+        return False
+
+
+def filter_results_by_created_date(created_date, results, model):
+    parsed_date = parse_date(created_date)
+    if not parsed_date:
+        raise HTTPException(status_code=400, detail="Invalid date")
+    # Filter by year
+    results = results.filter(extract("year", model.created_at) == parsed_date.year)
+    if len(created_date) > 4:
+        # Filter by month
+        results = results.filter(extract("month", model.created_at) == parsed_date.month)
+    if len(created_date) > 7:
+        # Filter by day
+        results = results.filter(extract("day", model.created_at) == parsed_date.day)
+    return results
+
+
+def get_and_filter_results(db: Session, column, group_by_column, from_date, to_date):
+    results = db.query(column,
+                       func.count(Product.sales).label("total_sales"),
+                       func.sum(Sale.sale_price).label("revenue"),
+                       func.sum(Sale.profit).label("profit")
+                       )
+    if to_date and from_date:
+        results = (results.filter(Product.created_at >= datetime.combine(from_date, time.min)).
+                   filter(Product.created_at <= datetime.combine(to_date, time.max)))
+    results = results.join(Sale.product).group_by(group_by_column)
+    return [r._mapping for r in results]
+
+
+def get_category_by_name(name: str, db: Session):
+    return db.query(Category).filter(Category.name == name).first()
+
+
+def get_product_by_id(product_id: int, db: Session):
+    return db.query(Product).filter(Product.id == product_id).first()

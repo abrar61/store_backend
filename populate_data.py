@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 import models
 import random
-from database import SessionLocal
+from core.database import SessionLocal
 from faker import Faker
 import datetime
 
