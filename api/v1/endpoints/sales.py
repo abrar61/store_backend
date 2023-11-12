@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from datetime import date
 
-from models.sale import SaleModel, SaleCreate, SaleReturn, Sale
+from models.sale import SaleModel, SaleCreate, SaleReturn, SaleAnalysis, Sale
 from models.product import Product
 from .products import get_product_by_id
 from api.v1.dependencies import get_db
@@ -51,7 +51,7 @@ def get_sales(product_name: str = "", category: str = "", sale_date: str = "", d
     return results.all()
 
 
-@router.get("/analysis-by-category/")
+@router.get("/analysis-by-category/", response_model=List[SaleAnalysis])
 @handle_exception_and_log
 def get_sales_analysis_by_category(from_date: date = "", to_date: date = "", db: Session = Depends(get_db)):
     if not bool(from_date) == bool(to_date):
@@ -61,7 +61,7 @@ def get_sales_analysis_by_category(from_date: date = "", to_date: date = "", db:
     return get_and_filter_results(db, Product.category, Product.category, from_date, to_date)
 
 
-@router.get("/analysis-by-product/")
+@router.get("/analysis-by-product/", response_model=List[SaleAnalysis])
 @handle_exception_and_log
 def get_sales_analysis_by_product(from_date: date = "", to_date: date = "", db: Session = Depends(get_db)):
     if not bool(from_date) == bool(to_date):

@@ -36,6 +36,16 @@ class SaleReturn(SaleBase):
         from_attributes = True
 
 
+class SaleAnalysis(BaseModel):
+    name: str
+    total_sales: int
+    revenue: float
+    profit: float
+
+    class Config:
+        from_attributes = True
+
+
 class Sale(Base):
     __tablename__ = "sales"
 
@@ -44,6 +54,6 @@ class Sale(Base):
     product = relationship("Product", back_populates="sales")
     sale_price = Column(Float)
     profit = Column(Float)
-    created_at = Column(DateTime, default=datetime.now)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 

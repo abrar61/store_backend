@@ -60,8 +60,7 @@ def get_and_filter_results(db: Session, column, group_by_column, from_date, to_d
     if to_date and from_date:
         results = (results.filter(Product.created_at >= datetime.combine(from_date, time.min)).
                    filter(Product.created_at <= datetime.combine(to_date, time.max)))
-    results = results.join(Sale.product).group_by(group_by_column)
-    return [r._mapping for r in results]
+    return results.join(Sale.product).group_by(group_by_column)
 
 
 def get_category_by_name(name: str, db: Session):
