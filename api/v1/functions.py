@@ -42,7 +42,7 @@ def handle_exception_and_log(fun):
 def filter_results_by_created_date(created_date, results, model):
     parsed_date = parse_date(created_date)
     if not parsed_date:
-        raise HTTPException(status_code=400, detail="Invalid date")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid date")
     # Filter by year
     results = results.filter(extract("year", model.created_at) == parsed_date.year)
     if len(created_date) > 4:
