@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from models.category import CategoryModel, Category
 from api.v1.dependencies import get_db
-from api.v1.functions import get_category_by_name
+from api.v1.functions import get_category_by_name, handle_exception_and_log
 
 from sqlalchemy.orm import Session
 
@@ -9,6 +9,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=CategoryModel)
+@handle_exception_and_log
 def create_category(category: CategoryModel, db: Session = Depends(get_db)):
     db_category = get_category_by_name(name=category.name, db=db)
     if db_category:
@@ -21,6 +22,7 @@ def create_category(category: CategoryModel, db: Session = Depends(get_db)):
 
 
 @router.get("/search-by-name/", response_model=CategoryModel)
+@handle_exception_and_log
 def search_category_by_name(name: str, db: Session = Depends(get_db)):
     db_category = get_category_by_name(name, db)
     if not db_category:

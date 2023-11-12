@@ -1,6 +1,8 @@
 from dateutil.parser import parse
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from datetime import time, datetime
+from functools import wraps
+import logging
 
 from sqlalchemy import extract, func
 from sqlalchemy.orm import Session
@@ -15,6 +17,23 @@ def parse_date(d):
         return parse(d)
     except:
         return False
+
+
+def handle_exception_and_log(fun):
+    @wraps(fun)
+    def inner(*args, **kwargs):
+        try:
+            logging.info(f"Function {fun.__name__} is accessed")
+            output = fun(*args, **kwargs)
+            logging.info(f"Output of function {fun.__name__} is {output}")
+            return output
+        except HTTPException as e:
+            logging.error(f"Exception raised in function {fun.__name__} is {e.detail}")
+            raise HTTPException(status_code=e.status_code, detail=e.detail)
+        except Exception as e:
+            logging.error(f"Error in function {fun.__name__} is {e}", exc_info=True)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    return inner
 
 
 def filter_results_by_created_date(created_date, results, model):

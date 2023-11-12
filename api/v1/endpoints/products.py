@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from models.product import ProductModel, ProductCreate, ProductUpdateCount, InventoryProduct, Product
 from .categories import get_category_by_name
 from api.v1.dependencies import get_db
-from api.v1.functions import get_product_by_id
+from api.v1.functions import get_product_by_id, handle_exception_and_log
 
 from sqlalchemy.orm import Session
 from sqlalchemy import case
@@ -14,6 +14,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=ProductCreate)
+@handle_exception_and_log
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db_category = get_category_by_name(name=product.category, db=db)
     if not db_category:
@@ -26,6 +27,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/id/{product_id}/", response_model=ProductModel)
+@handle_exception_and_log
 def search_product_by_id(product_id: int, db: Session = Depends(get_db)):
     db_product = get_product_by_id(product_id, db)
     if not db_product:
@@ -34,6 +36,7 @@ def search_product_by_id(product_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/name/{name}/", response_model=List[ProductModel])
+@handle_exception_and_log
 def get_products_by_name(name: str, created_date: str = "", db: Session = Depends(get_db)):
     results = db.query(Product)
     if created_date:
@@ -43,6 +46,7 @@ def get_products_by_name(name: str, created_date: str = "", db: Session = Depend
 
 
 @router.get("/category/{category}/", response_model=List[ProductModel])
+@handle_exception_and_log
 def search_products_by_category(category: str, created_date: str = "", db: Session = Depends(get_db)):
     results = db.query(Product)
     if created_date:
@@ -52,6 +56,7 @@ def search_products_by_category(category: str, created_date: str = "", db: Sessi
 
 
 @router.get("/inventory/", response_model=List[InventoryProduct])
+@handle_exception_and_log
 def get_inventory(db: Session = Depends(get_db)):
     return db.query(Product.id, Product.name, Product.count,
                     case(
@@ -61,6 +66,7 @@ def get_inventory(db: Session = Depends(get_db)):
 
 
 @router.patch("/update-inventory/", response_model=List[InventoryProduct])
+@handle_exception_and_log
 def update_inventory(products: List[ProductUpdateCount], db: Session = Depends(get_db)):
     product_list = []
     for product in products:

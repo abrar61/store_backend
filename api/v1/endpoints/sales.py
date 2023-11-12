@@ -10,12 +10,13 @@ from sqlalchemy.orm import Session
 
 from typing import List
 from re import match
-from api.v1.functions import filter_results_by_created_date, get_and_filter_results
+from api.v1.functions import filter_results_by_created_date, get_and_filter_results, handle_exception_and_log
 
 router = APIRouter()
 
 
 @router.post("/", response_model=SaleModel)
+@handle_exception_and_log
 def sell_product(sale: SaleCreate, db: Session = Depends(get_db)):
     db_product = get_product_by_id(product_id=sale.product_id, db=db)
     if not db_product:
@@ -35,6 +36,7 @@ def sell_product(sale: SaleCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=List[SaleReturn])
+@handle_exception_and_log
 def get_sales(product_name: str = "", category: str = "", sale_date: str = "", db: Session = Depends(get_db)):
     if sale_date:
         if not (match("^\d{4}$|^\d{4}-\d{2}$|^\d{4}-\d{2}-\d{2}$", sale_date)):
@@ -50,6 +52,7 @@ def get_sales(product_name: str = "", category: str = "", sale_date: str = "", d
 
 
 @router.get("/analysis-by-category/")
+@handle_exception_and_log
 def get_sales_analysis_by_category(from_date: date = "", to_date: date = "", db: Session = Depends(get_db)):
     if not bool(from_date) == bool(to_date):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Date input is not valid")
@@ -59,6 +62,7 @@ def get_sales_analysis_by_category(from_date: date = "", to_date: date = "", db:
 
 
 @router.get("/analysis-by-product/")
+@handle_exception_and_log
 def get_sales_analysis_by_product(from_date: date = "", to_date: date = "", db: Session = Depends(get_db)):
     if not bool(from_date) == bool(to_date):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Date input is not valid")
