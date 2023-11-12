@@ -9,17 +9,17 @@ git clone git@github.com:abrar61/store_backend.git
 cd [project-folder-path]
 ```
 
-### Create a venv of python using following command
+### Create docker image of backend app and mysql by following command
 ```
-python3.8 -m venv venv
-```
-
-### Update pip (if necessary)
-```
-pip install -U pip
+docker-compose build
 ```
 
-### Install the required packages using following command
+### Run the containers by following command
+```
+docker-compose up -d
+```
+
+### To populate data, execute
 ```
 pip install -r requirements.txt --no-deps
 ```

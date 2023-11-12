@@ -16,7 +16,7 @@ class CategoryModel(BaseModel):
 class Category(Base):
     __tablename__ = "categories"
 
-    name = Column(String, primary_key=True, index=True)
+    name = Column(String(150), primary_key=True, index=True)
     products = relationship("Product", back_populates="product_category")
 
 

@@ -53,9 +53,9 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String, nullable=True)
-    category = Column(String, ForeignKey("categories.name"))
+    name = Column(String(150), index=True)
+    description = Column(String(150), nullable=True)
+    category = Column(String(150), ForeignKey("categories.name"))
     count = Column(Integer, default=0)
     cost_price = Column(Float)
     retail_price = Column(Float)
