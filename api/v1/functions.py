@@ -12,6 +12,7 @@ from models.sale import Sale
 from models.category import Category
 
 
+# Utility function to parse a date string
 def parse_date(d):
     try:
         return parse(d)
@@ -19,6 +20,7 @@ def parse_date(d):
         return False
 
 
+# Decorator to handle exceptions and log information
 def handle_exception_and_log(fun):
     @wraps(fun)
     def inner(*args, **kwargs):
@@ -36,6 +38,7 @@ def handle_exception_and_log(fun):
     return inner
 
 
+# Utility function to filter results by created date
 def filter_results_by_created_date(created_date, results, model):
     parsed_date = parse_date(created_date)
     if not parsed_date:
@@ -51,6 +54,7 @@ def filter_results_by_created_date(created_date, results, model):
     return results
 
 
+# Utility function to get and filter results by date range
 def get_and_filter_results(db: Session, column, group_by_column, from_date, to_date):
     results = db.query(column,
                        func.count(Product.sales).label("total_sales"),
@@ -63,9 +67,11 @@ def get_and_filter_results(db: Session, column, group_by_column, from_date, to_d
     return results.join(Sale.product).group_by(group_by_column)
 
 
+# Utility function to get a category by name
 def get_category_by_name(name: str, db: Session):
     return db.query(Category).filter(Category.name == name).first()
 
 
+# Utility function to get a product by ID
 def get_product_by_id(product_id: int, db: Session):
     return db.query(Product).filter(Product.id == product_id).first()
