@@ -9,7 +9,7 @@ services:
       - "8010:8000"
     environment:
       - PYTHONUNBUFFERED=1
-      - DATABASE_URL=mysql+mysqlconnector://test_username:test_password@db:3306/test_database
+      - DATABASE_URL=mysql+pymysql://test_username:test_password@db:3306/test_database
     depends_on:
       - db
 
