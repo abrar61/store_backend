@@ -12,7 +12,8 @@ services:
       - DATABASE_URL=mysql+mysqlconnector://test_username:test_password@db:3306/test_database
     depends_on:
       - db
-
+    volumes:
+      - ./logs:/store_backend/logs
   db:
     image: mysql:latest
     environment:
